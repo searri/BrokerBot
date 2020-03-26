@@ -1,34 +1,45 @@
-//#include <Wire.h>
 #include <LiquidCrystal.h>
+#define NUM_ITEMS 18
 
-const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
-LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+byte toSend[NUM_ITEMS];
+byte j = 0;
 
 void setup()
 {
-//  Wire.begin(); // join i2c bus (address optional for master)
-
   Serial.begin(9600);
   
   pinMode(LED_BUILTIN, OUTPUT);
-  lcd.begin(16, 2);
   digitalWrite(LED_BUILTIN, LOW);
+  
+  lcd.begin(16, 2);
 }
-
-byte x = 0;
 
 void loop()
 {
-//  Wire.beginTransmission(4); // transmit to device #4
-//  Wire.write(x);              // sends one byte  
-//  Wire.endTransmission();    // stop transmitting
+  if(!(j%2)) {
+    for(int i=0; i<NUM_ITEMS/2; i++) {
+      toSend[i+(NUM_ITEMS/2)] = 1;
+    }
+  } else {
+    for(int i=0; i<NUM_ITEMS/2; i++) {
+      toSend[i+(NUM_ITEMS/2)] = 0;
+    }
+  }
+ 
+  for(int i=0; i<NUM_ITEMS/2; i++) {
+    toSend[i] = j;
+  }
 
-  Serial.write(x);
+  for(int i=0; i < NUM_ITEMS; i++) {
+    Serial.write(toSend[i]);
+  }
 
   lcd.clear();
+  lcd.print(toSend[0]);
   lcd.setCursor(0, 1);
-  lcd.print(x);
-  
-  x++;
+  lcd.print(toSend[NUM_ITEMS/2]);
+
+  j++;
   delay(1000);
 }
