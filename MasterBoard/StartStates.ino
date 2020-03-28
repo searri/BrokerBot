@@ -42,7 +42,7 @@ void handleStateTwo() {
 
   // To start game, spend all money
   char stockPurchased = 0;
-  while(stockPurchased < 6) {
+  while(stockPurchased < 5) {
     short stockToBuy = random(0, NUM_STOCKS+1);
     stocksToBuy[stockToBuy]++;
     stockPurchased++;
@@ -51,7 +51,7 @@ void handleStateTwo() {
   for(int i=0; i<NUM_STOCKS; i++) {
     if(stocksToBuy[i]) {
       short ret = purchaseStock(i, stocksToBuy[i]*10);
-      if(ret - stocksToBuy[i]*10) {
+      if(stocksToBuy[i]*10 - ret) {
         state = 104;
         return;
       }

@@ -18,6 +18,7 @@ int liquidCash = 5000;
 char state = 0;
 char years;
 bool printNext = true;
+bool isBullMkt;
 
 void setup() {
   // Initialize hardware I/O
@@ -62,6 +63,12 @@ void loop() {
       break;
     case 2:
       handleStateTwo();
+      break;
+    case 3:
+      handleStateThree();
+      break;
+    case 4:
+      handleStateFour();
       break;
     default:
       lcd.clear();
