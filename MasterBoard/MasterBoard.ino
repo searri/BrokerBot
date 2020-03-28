@@ -12,10 +12,12 @@ byte j = 0;
 
 // Bot player's portfolio
 stock portfolio[NUM_STOCKS];
+int liquidCash = 5000;
 
 // Internal logistics
 char state = 0;
 char years;
+bool printNext = true;
 
 void setup() {
   // Initialize hardware I/O
@@ -30,6 +32,7 @@ void setup() {
     portfolio[i] = thisStock;
   }
 
+  // Set stock dividend values
   portfolio[0].dividend = 50;
   portfolio[1].dividend = 10;
   portfolio[3].dividend = 40;
@@ -37,24 +40,75 @@ void setup() {
   portfolio[7].dividend = 20;
   portfolio[8].dividend = 60;
   portfolio[9].dividend = 30;
+
+  // Shuffle random seed using data noise on A0
+  randomSeed(analogRead(A0));
 }
 
 
 void loop() {
+  // Error check
+  if(liquidCash < 0) {
+    state = 101;
+  }
+
+  // Handle current game state
   switch(state) {
     case 0:
       handleStateZero();
       break;
+    case 1:
+      handleStateOne();
+      break;
+    case 2:
+      handleStateTwo();
+      break;
     default:
       lcd.clear();
       lcd.print(state, DEC);
+      lcd.print(" - $");
+      lcd.print(liquidCash);
+      lcd.setCursor(0, 1);
+      lcd.print("ERROR STATE");
       break;
   }
   delay(100);
 }
 
-void showStockName(short nameCode) {
-  switch(nameCode) {
+// Helper function to purchase stock (needs user interaction)
+short purchaseStock(short stockID, short q) {
+  int purchasePrice = portfolio[stockID].currVal * q;
+
+  // Check to make sure this transaction can be made
+  if(purchasePrice > liquidCash) {
+    state = 102;
+    return 0;
+  } else if (q % 10) {
+    state = 103;
+    return 0;
+  }
+
+  // TEMPORARY: will change to keypad input
+  lcd.clear();
+  showStockName(stockID);
+  lcd.setCursor(0, 1);
+  lcd.print("Buy ");
+  lcd.print(q);
+  while(!Serial.available()){}
+  short actuallyPurchased = Serial.parseInt();
+  lcd.print(" ");
+  lcd.print(actuallyPurchased);
+  delay(1500);
+
+  // Update liquid cash and portfolio quantity
+  liquidCash -= (actuallyPurchased*portfolio[stockID].currVal);
+  portfolio[stockID].quantity += actuallyPurchased;
+  return actuallyPurchased;
+}
+
+// Helper function to print stock name on LCD
+void showStockName(short stockID) {
+  switch(stockID) {
     case 0:
       lcd.print("CITY BONDS");
       break;

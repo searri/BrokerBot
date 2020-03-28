@@ -27,8 +27,37 @@ void handleStateOne() {
   
   // TEMPORARY: will write years to other board and wait for confirmation
   if(Serial.available()) {
-    Serial.flush();
+    short a = Serial.parseInt();
     state++;
     printNext = true;
   }
+}
+
+// STRATEGY
+void handleStateTwo() {
+  short stocksToBuy[NUM_STOCKS];
+  for(int i=0; i<NUM_STOCKS; i++) {
+    stocksToBuy[i] = 0;
+  }
+
+  // To start game, spend all money
+  char stockPurchased = 0;
+  while(stockPurchased < 6) {
+    short stockToBuy = random(0, NUM_STOCKS+1);
+    stocksToBuy[stockToBuy]++;
+    stockPurchased++;
+  }
+
+  for(int i=0; i<NUM_STOCKS; i++) {
+    if(stocksToBuy[i]) {
+      short ret = purchaseStock(i, stocksToBuy[i]*10);
+      if(ret - stocksToBuy[i]*10) {
+        state = 104;
+        return;
+      }
+    }
+  }
+
+  printNext = true;
+  state++;
 }
