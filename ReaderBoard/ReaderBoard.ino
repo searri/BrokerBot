@@ -1,10 +1,14 @@
-#define LED_PIN D3
+#define RED_LED D3
+#define GREEN_LED D4
+#define BLUE_LED D5
 #define MAX_WAIT 1000
 #define NUM_ITEMS 18
 
 void setup()
 {
-  pinMode(LED_PIN, OUTPUT);
+  pinMode(RED_LED, OUTPUT);
+  pinMode(GREEN_LED, OUTPUT);
+  pinMode(BLUE_LED, OUTPUT);
   Serial.begin(9600);
 }
 
@@ -25,13 +29,12 @@ void loop()
       priceChanges[i] *= -1;
     }
   }
-
-  // TEMPORARY DEBUG CODE
-  if(priceChanges[0] < 0) {
-    digitalWrite(LED_PIN, HIGH);
-  } else {
-    digitalWrite(LED_PIN, LOW);
-  }
   
   delay(100);
+}
+
+void changeColor(int red, int green, int blue) {
+  analogWrite(RED_LED, red);
+  analogWrite(GREEN_LED, green);
+  analogWrite(BLUE_LED, blue);
 }
