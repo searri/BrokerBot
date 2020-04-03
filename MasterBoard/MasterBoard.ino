@@ -17,8 +17,11 @@ int liquidCash = 5000;
 // Internal logistics
 char state = 0;
 char years;
+char yearsPassed = 0;
 bool printNext = true;
 bool isBullMkt;
+char priceChanges[NUM_STOCKS];
+bool proceed = false;
 
 void setup() {
   // Initialize hardware I/O
@@ -69,6 +72,12 @@ void loop() {
       break;
     case 4:
       handleStateFour();
+      break;
+    case 5:
+      handleStateFive();
+      break;
+    case 6:
+      handleStateSix();
       break;
     default:
       lcd.clear();
