@@ -121,6 +121,7 @@ void handleStateSix() {
   if(Serial.available()) {
     event = Serial.parseInt();
     if(event > 36 || event < 1) {
+      lcd.setCursor(0, 1);
       lcd.print("INVALID");
       delay(2000);
       lcd.setCursor(0, 1);

@@ -1,14 +1,10 @@
 #include <LiquidCrystal.h>
 #include "Stocks.h"
-#define NUM_ITEMS 18
 #define NUM_STOCKS 10
+#define NUM_ITEMS (NUM_STOCKS-1)*2
 
 // Set up LiquidCrystal object
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-
-// Logistic attributes for communicating with other board
-byte toSend[NUM_ITEMS];
-byte j = 0;
 
 // Bot player's portfolio
 stock portfolio[NUM_STOCKS];
@@ -79,6 +75,9 @@ void loop() {
     case 6:
       handleStateSix();
       break;
+    case 7:
+      handleStateSeven();
+      break;
     default:
       lcd.clear();
       lcd.print(state, DEC);
@@ -119,6 +118,7 @@ short purchaseStock(short stockID, short q) {
   // Update liquid cash and portfolio quantity
   liquidCash -= (actuallyPurchased*portfolio[stockID].currVal);
   portfolio[stockID].quantity += actuallyPurchased;
+  portfolio[stockID].startVal = portfolio[stockID].currVal;
   return actuallyPurchased;
 }
 
