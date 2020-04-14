@@ -1,4 +1,4 @@
-void handleStateZero() {
+void getNumOfYears() {
   if(printNext) {
     lcd.print("Game length:");
     printNext = false;
@@ -16,7 +16,7 @@ void handleStateZero() {
   }
 }
 
-void handleStateOne() {
+void setUpServer() {
   if(printNext) {
     lcd.clear();
     lcd.print("Connecting to");
@@ -34,7 +34,7 @@ void handleStateOne() {
 }
 
 // STRATEGY
-void handleStateTwo() {
+void purchaseStartStocks() {
   short stocksToBuy[NUM_STOCKS];
   for(int i=0; i<NUM_STOCKS; i++) {
     stocksToBuy[i] = 0;

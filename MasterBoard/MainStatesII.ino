@@ -1,5 +1,5 @@
 // Update prices in portfolio, write changes to other board
-void handleStateSeven() {
+void updateStockPrices() {
   if(!proceed) {
     for(int i=0; i<NUM_STOCKS; i++) {
       portfolio[i].currVal += portfolio[i].amtChange;

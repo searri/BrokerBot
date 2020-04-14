@@ -55,28 +55,28 @@ void loop() {
   // Handle current game state
   switch(state) {
     case 0:
-      handleStateZero();
+      getNumOfYears();
       break;
     case 1:
-      handleStateOne();
+      setUpServer();
       break;
     case 2:
-      handleStateTwo();
+      purchaseStartStocks();
       break;
     case 3:
-      handleStateThree();
+      calcDividends();
       break;
     case 4:
-      handleStateFour();
+      bullOrBear();
       break;
     case 5:
-      handleStateFive();
+      getPriceRoll();
       break;
     case 6:
-      handleStateSix();
+      getEventCard();
       break;
     case 7:
-      handleStateSeven();
+      updateStockPrices();
       break;
     default:
       lcd.clear();

@@ -1,4 +1,4 @@
-void handleStateThree() {
+void calcDividends() {
   // Calculate dividends on current portfolio
   for(int i=0; i<NUM_STOCKS; i++) {
     liquidCash += (portfolio[i].dividend * (portfolio[i].quantity/10));
@@ -6,7 +6,7 @@ void handleStateThree() {
   state++;
 }
 
-void handleStateFour() {
+void bullOrBear() {
   if(printNext) {
     lcd.clear();
     lcd.print("ODD: Bull");
@@ -36,7 +36,7 @@ void handleStateFour() {
 }
 
 // Calculate price changes based on dice roll
-void handleStateFive() {
+void getPriceRoll() {
   int roll = 13;
   
   if(printNext) {
@@ -109,7 +109,7 @@ void handleStateFive() {
 }
 
 // Calculate prices based on event card
-void handleStateSix() {
+void getEventCard() {
   int event = 0;
   if(printNext) {
     lcd.clear();
