@@ -31,3 +31,32 @@ void updateStockPrices() {
     proceed = false;
   }
 }
+
+// STRATEGY
+void findStocksToSell() {
+  bool soldAny = false;
+  
+  // Find stocks that have increased at least this threshold
+  short sellThreshold = 20;
+
+  // ...and then sell all of them
+  for(int i=0; i<NUM_STOCKS; i++) {
+    if(portfolio[i].currVal - portfolio[i].startVal >= sellThreshold && portfolio[i].quantity) {
+      sellStock(i, portfolio[i].quantity);
+      soldAny = true;
+    }
+  }
+
+  if(!soldAny) {
+    lcd.clear();
+    lcd.print("Not selling.");
+    lcd.setCursor(0, 1);
+    lcd.print("Continue: any #");
+    while(!Serial.available()){}
+    short actuallySold = Serial.parseInt();
+    lcd.clear();
+    delay(1000);
+  }
+
+  state++;
+}

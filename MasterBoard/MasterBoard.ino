@@ -78,6 +78,9 @@ void loop() {
     case 7:
       updateStockPrices();
       break;
+    case 8:
+      findStocksToSell();
+      break;
     default:
       lcd.clear();
       lcd.print(state, DEC);
@@ -120,6 +123,36 @@ short purchaseStock(short stockID, short q) {
   portfolio[stockID].quantity += actuallyPurchased;
   portfolio[stockID].startVal = portfolio[stockID].currVal;
   return actuallyPurchased;
+}
+
+// Helper function to sell stock (needs user interaction)
+void sellStock(short stockID, short q) {
+  int sellPrice = portfolio[stockID].currVal * q;
+
+  // Check to make sure this transaction can be made
+  if(portfolio[stockID].quantity < q) {
+    state = 110;
+    return;
+  } else if (q % 10) {
+    state = 111;
+    return;
+  }
+
+  // TEMPORARY: will change to keypad input
+  lcd.clear();
+  showStockName(stockID);
+  lcd.setCursor(0, 1);
+  lcd.print("Sell ");
+  lcd.print(q);
+  while(!Serial.available()){}
+  short actuallySold = Serial.parseInt();
+  lcd.print(" ");
+  lcd.print(actuallySold);
+  delay(1500);
+
+  // Update liquid cash and portfolio quantity
+  liquidCash += (q*portfolio[stockID].currVal);
+  portfolio[stockID].quantity -= q;
 }
 
 // Helper function to print stock name on LCD
