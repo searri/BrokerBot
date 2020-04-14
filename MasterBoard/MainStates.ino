@@ -3,6 +3,11 @@ void calcDividends() {
   for(int i=0; i<NUM_STOCKS; i++) {
     liquidCash += (portfolio[i].dividend * (portfolio[i].quantity/10));
   }
+
+  // Reset purchasability of all stocks
+  for(int i=0; i<NUM_STOCKS; i++) {
+    portfolio[i].canBuy = true;
+  }
   state++;
 }
 

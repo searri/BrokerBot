@@ -43,7 +43,7 @@ void purchaseStartStocks() {
   // To start game, spend all money
   char stockPurchased = 0;
   while(stockPurchased < 5) {
-    short stockToBuy = random(0, NUM_STOCKS+1);
+    short stockToBuy = random(1, NUM_STOCKS+1);
     stocksToBuy[stockToBuy]++;
     stockPurchased++;
   }

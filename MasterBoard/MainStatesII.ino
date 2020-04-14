@@ -60,3 +60,38 @@ void findStocksToSell() {
 
   state++;
 }
+
+// STRATEGY
+void findStocksToBuy() {
+  // Don't buy bonds
+  portfolio[0].canBuy = false;
+  
+  // Stock prices can never be over 150 a share
+  short minVal = 151;
+  short minInd = -1;
+  for(short i=0; i<NUM_STOCKS; i++) {
+    if(portfolio[i].currVal < minVal && portfolio[i].canBuy) {
+      minVal = portfolio[i].currVal;
+      minInd = i;
+    }
+  }
+
+  // We now have the cheapest stock -- invest as much as possible
+  short quantToBuy = liquidCash/(minVal*10);
+  // If this is 0, we can't afford even the cheapest stock
+  if(!quantToBuy) {
+    state = 3;
+    return;
+  }
+
+  // Note: if we already own some of this stock, the original price will be lost
+  short actuallyBought = purchaseStock(minInd, quantToBuy*10);
+
+  if(actuallyBought < quantToBuy*10) {
+    // There's still some money leftover, try buying something else
+    portfolio[minInd].canBuy = false;
+  } else {
+    // We successfully bought everything, move to next year
+    state = 3;
+  }
+}

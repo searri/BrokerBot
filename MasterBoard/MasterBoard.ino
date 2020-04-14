@@ -28,7 +28,7 @@ void setup() {
 
   // Initialize all stocks at starting value
   for(int i=0; i<NUM_STOCKS; i++) {
-    stock thisStock = {i, 0, 0, 100, 0, 0};
+    stock thisStock = {i, 0, 0, 100, 0, 0, true};
     portfolio[i] = thisStock;
   }
 
@@ -80,6 +80,9 @@ void loop() {
       break;
     case 8:
       findStocksToSell();
+      break;
+    case 9:
+      findStocksToBuy();
       break;
     default:
       lcd.clear();

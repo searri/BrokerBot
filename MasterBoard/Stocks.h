@@ -14,4 +14,7 @@ struct stock
 
     // This is the dividend per 10 SHARES
     short dividend;
+
+    // Internal attribute for purchasing
+    bool canBuy;    
 };
