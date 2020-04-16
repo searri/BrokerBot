@@ -12,7 +12,7 @@ int liquidCash = 5000;
 
 // Internal logistics
 char state = 0;
-char years;
+char years = 100;
 char yearsPassed = 0;
 bool printNext = true;
 bool isBullMkt;
@@ -52,6 +52,11 @@ void loop() {
     state = 101;
   }
 
+  // Check for game end
+  if(yearsPassed > years) {
+    state = 10;
+  }
+
   // Handle current game state
   switch(state) {
     case 0:
@@ -83,6 +88,17 @@ void loop() {
       break;
     case 9:
       findStocksToBuy();
+      break;
+    case 10:
+      if(printNext) {
+        endGame();
+        lcd.clear();
+        lcd.print("Good game!");
+        lcd.setCursor(0, 1);
+        lcd.print("$");
+        lcd.print(liquidCash);
+        printNext = false;
+      }
       break;
     default:
       lcd.clear();

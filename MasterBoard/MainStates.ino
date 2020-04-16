@@ -1,4 +1,4 @@
-void calcDividends() {
+void calcDividends() {  
   // Calculate dividends on current portfolio
   for(int i=0; i<NUM_STOCKS; i++) {
     liquidCash += (portfolio[i].dividend * (portfolio[i].quantity/10));
@@ -8,6 +8,9 @@ void calcDividends() {
   for(int i=0; i<NUM_STOCKS; i++) {
     portfolio[i].canBuy = true;
   }
+
+  // Advance time
+  yearsPassed++;
   state++;
 }
 

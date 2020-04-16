@@ -95,3 +95,12 @@ void findStocksToBuy() {
     state = 3;
   }
 }
+
+// Called after we calculate dividends for the final year
+void endGame() {
+  // Add final stock values to liquidCash
+  for(int i=0; i<NUM_STOCKS; i++) {
+    liquidCash += (portfolio[i].currVal * portfolio[i].quantity);
+    portfolio[i].quantity = 0;
+  }
+}
