@@ -1,7 +1,11 @@
 void calcDividends() {  
   // Calculate dividends on current portfolio
   for(int i=0; i<NUM_STOCKS; i++) {
-    liquidCash += (portfolio[i].dividend * (portfolio[i].quantity/10));
+
+    // Stock only yields dividends if its value is over 50
+    if(portfolio[i].currVal > 50) {
+      liquidCash += (portfolio[i].dividend * (portfolio[i].quantity/10)); 
+    }
   }
 
   // Reset purchasability of all stocks
@@ -38,7 +42,6 @@ void bullOrBear() {
     }
     delay(3000);
     state++;
-    yearsPassed++;
     printNext = true;
   }
 }

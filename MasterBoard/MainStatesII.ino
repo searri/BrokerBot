@@ -3,6 +3,23 @@ void updateStockPrices() {
   if(!proceed) {
     for(int i=0; i<NUM_STOCKS; i++) {
       portfolio[i].currVal += portfolio[i].amtChange;
+
+      // If stock value goes over $150, it splits
+      if(portfolio[i].currVal >= 150) {
+        if(portfolio[i].currVal % 2) {
+          portfolio[i].currVal /= 2;
+          portfolio[i].currVal++;
+        } else {
+          portfolio[i].currVal /= 2;
+        }
+        portfolio[i].quantity *= 2;
+      }
+
+      // If stock value goes under 0, it resets to $100 and all shares are lost
+      if(portfolio[i].currVal <= 0) {
+        portfolio[i].currVal = 100;
+        portfolio[i].quantity = 0;
+      }
     }
   
     byte toSend[NUM_ITEMS];
