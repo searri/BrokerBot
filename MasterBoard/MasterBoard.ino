@@ -4,7 +4,7 @@
 #define NUM_ITEMS (NUM_STOCKS-1)*2
 
 // Set up LiquidCrystal object
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+LiquidCrystal lcd(D7, D6, D5, D4, D3, D0);
 
 // Bot player's portfolio
 stock portfolio[NUM_STOCKS];
