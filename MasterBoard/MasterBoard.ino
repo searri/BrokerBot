@@ -53,7 +53,7 @@ void loop() {
   }
 
   // Check for game end
-  if(yearsPassed > years) {
+  if(yearsPassed >= years) {
     state = 10;
   }
 
