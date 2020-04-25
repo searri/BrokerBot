@@ -3,22 +3,35 @@ Starter code from this tutorial:
 https://www.bogotobogo.com/python/python-REST-API-Http-Requests-for-Humans-with-Flask.php
 """
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template, url_for
+import os
 
-app = Flask(__name__.split(".")[0])
+# Create Flask object
+app = Flask(__name__)
 
-
-quarks = [
-    {"name": "up", "charge": "+2/3"},
-    {"name": "down", "charge": "-1/3"},
-    {"name": "charm", "charge": "+2/3"},
-    {"name": "strange", "charge": "-1/3"},
+# Define stock names and start prices
+stocks = [
+    {"name": "Central City Municipal Bonds", "price": 100},
+    {"name": "Growth Corporation of America", "price": 100},
+    {"name": "Metro Properties, Inc.", "price": 100},
+    {"name": "Pioneer Mutual Fund", "price": 100},
+    {"name": "Shady Brooks Development", "price": 100},
+    {"name": "Stryker Drilling Company", "price": 100},
+    {"name": "Tri-City Transport Company", "price": 100},
+    {"name": "United Auto Company", "price": 100},
+    {"name": "Uranium Enterprises, Inc.", "price": 100},
+    {"name": "Valley Power & Light Company", "price": 100},
 ]
 
+# Is there an active connection?
+active_game = False
 
 @app.route("/", methods=["GET"])
-def hello_world():
-    return jsonify({"message": "Hello, World!"})
+def start_game():
+    if not active_game:
+        return render_template("gamewait.html")
+    else:
+        return jsonify({"temp"})
 
 
 @app.route("/quarks", methods=["GET"])
@@ -49,14 +62,6 @@ def editOne(name):
         if q["name"] == name:
             quarks[i] = new_quark
     qs = request.get_json()
-    return jsonify({"quarks": quarks})
-
-
-@app.route("/quarks/<string:name>", methods=["DELETE"])
-def deleteOne(name):
-    for i, q in enumerate(quarks):
-        if q["name"] == name:
-            del quarks[i]
     return jsonify({"quarks": quarks})
 
 
