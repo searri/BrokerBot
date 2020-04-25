@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.5.js"></script>
+    <title>S&B Cloud Service</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow&family=Lato&display=swap" rel="stylesheet">
+    <style>
+        body,
+        h1,
+        h5 {
+            font-family: "Barlow", sans-serif
+        }
+
+        body,
+        html {
+            height: 100%
+        }
+
+        .bgimg {
+            background-image: url("/static/finance.gif");
+            min-height: 100%;
+            background-position: center;
+            background-size: cover;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .stockreset {
+            background-color: rgb(230, 93, 93);
+        }
+
+        .nodividends {
+            background-color: rgb(240, 215, 105);
+        }
+
+        .stocksplit {
+            background-color: rgb(134, 218, 134);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bgimg w3-display-container">
+        <div class="w3-display-middle" , style="background-color: white;">
+            <table>
+                <thead>
+                    <tr>
+                        {% for header in stock_prices[0].keys() %}
+                        <th>{{ header }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+
+                {% for row in stock_prices %}
+                <tr>
+                    {% for key in stock_prices[0].keys() %}
+                    <td>{{ row[key] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+
+            <script type="text/javascript">
+                $(function () {
+                    $('tr > td').each(function (index) {
+                        var price = $(this).text();
+
+                        if (price <= 0) {
+                            // Stock price is too low; will reset to 100
+                            $(this).addClass('stockreset');
+                        } else if (price <= 50) {
+                            // Stock price is low enough to eliminate dividends
+                            $(this).addClass('nodividends');
+                        } else if (price >= 150) {
+                            // Stock price is high enough to split
+                            $(this).addClass('stocksplit');
+                            $(this).append(' / ');
+                            $(this).append(Math.round(price / 2));
+                        }
+                    });
+                });
+            </script>
+
+        </div>
+        <div class="w3-display-bottomleft w3-container">
+            <p><a href="https://www.youtube.com/watch?v=86MKzstijzI" target="_blank">Background</a> | Follow me on <a
+                    href="https://github.com/searri" target="_blank">GitHub</a></p>
+        </div>
+    </div>
+
+</body>
+
+</html>
