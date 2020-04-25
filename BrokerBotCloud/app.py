@@ -1,67 +1,43 @@
-"""
-Starter code from this tutorial:
-https://www.bogotobogo.com/python/python-REST-API-Http-Requests-for-Humans-with-Flask.php
-"""
-
 from flask import Flask, jsonify, request, render_template, url_for
+from collections import OrderedDict
 import os
 
 # Create Flask object
 app = Flask(__name__)
 
-# Define stock names and start prices
+# Table of stock information
+# OrderedDicts because years are sequential, but convenient to access data w/ key-value pairs
 stocks = [
-    {"name": "Central City Municipal Bonds", "price": 100},
-    {"name": "Growth Corporation of America", "price": 100},
-    {"name": "Metro Properties, Inc.", "price": 100},
-    {"name": "Pioneer Mutual Fund", "price": 100},
-    {"name": "Shady Brooks Development", "price": 100},
-    {"name": "Stryker Drilling Company", "price": 100},
-    {"name": "Tri-City Transport Company", "price": 100},
-    {"name": "United Auto Company", "price": 100},
-    {"name": "Uranium Enterprises, Inc.", "price": 100},
-    {"name": "Valley Power & Light Company", "price": 100},
+    OrderedDict({"Company": "Central City Municipal Bonds", "Year 1": 100}),
+    OrderedDict({"Company": "Growth Corporation of America", "Year 1": 100}),
+    OrderedDict({"Company": "Metro Properties, Inc.", "Year 1": 100}),
+    OrderedDict({"Company": "Pioneer Mutual Fund", "Year 1": 100}),
+    OrderedDict({"Company": "Shady Brooks Development", "Year 1": 100}),
+    OrderedDict({"Company": "Stryker Drilling Company", "Year 1": 100}),
+    OrderedDict({"Company": "Tri-City Transport Company", "Year 1": 100}),
+    OrderedDict({"Company": "United Auto Company", "Year 1": 100}),
+    OrderedDict({"Company": "Uranium Enterprises, Inc.", "Year 1": 100}),
+    OrderedDict({"Company": "Valley Power & Light Company", "Year 1": 100}),
 ]
 
-# Is there an active connection?
+# Internal logistics
 active_game = False
+current_year = 1
 
-@app.route("/", methods=["GET"])
+# This is where webpages will get directed to
+@app.route("/")
 def start_game():
     if not active_game:
         return render_template("gamewait.html")
     else:
-        return jsonify({"temp"})
+        return render_template("gameactive.html", stock_prices=stocks)
 
 
-@app.route("/quarks", methods=["GET"])
-def returnAll():
-    return jsonify({"quarks": quarks})
-
-
-@app.route("/quarks/<string:name>", methods=["GET"])
-def returnOne(name):
-    theOne = quarks[0]
-    for i, q in enumerate(quarks):
-        if q["name"] == name:
-            theOne = quarks[i]
-    return jsonify({"quarks": theOne})
-
-
+# TODO: Implement POST requests to update stock prices/start game
 @app.route("/quarks", methods=["POST"])
 def addOne():
     new_quark = request.get_json()
     quarks.append(new_quark)
-    return jsonify({"quarks": quarks})
-
-
-@app.route("/quarks/<string:name>", methods=["PUT"])
-def editOne(name):
-    new_quark = request.get_json()
-    for i, q in enumerate(quarks):
-        if q["name"] == name:
-            quarks[i] = new_quark
-    qs = request.get_json()
     return jsonify({"quarks": quarks})
 
 
