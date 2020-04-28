@@ -1,7 +1,8 @@
 #include <LiquidCrystal.h>
 #include "Stocks.h"
 #define NUM_STOCKS 10
-#define NUM_ITEMS (NUM_STOCKS-1)*2
+#define ENC_CLK D1
+#define ENC_SW D2
 
 // Set up LiquidCrystal object
 LiquidCrystal lcd(D7, D6, D5, D4, D3, D0);
@@ -26,6 +27,10 @@ void setup() {
   digitalWrite(LED_BUILTIN, LOW);
   lcd.begin(16, 2);
 
+  // Set encoder pins as inputs
+  pinMode(ENC_CLK,INPUT);
+  pinMode(ENC_SW, INPUT_PULLUP);
+
   // Initialize all stocks at starting value
   for(int i=0; i<NUM_STOCKS; i++) {
     stock thisStock = {i, 0, 0, 100, 0, 0, true};
@@ -41,7 +46,7 @@ void setup() {
   portfolio[8].dividend = 60;
   portfolio[9].dividend = 30;
 
-  // Shuffle random seed using data noise on A0
+  // Shuffle random seed using electrical noise on A0
   randomSeed(analogRead(A0));
 }
 
@@ -172,6 +177,66 @@ void sellStock(short stockID, short q) {
   // Update liquid cash and portfolio quantity
   liquidCash += (q*portfolio[stockID].currVal);
   portfolio[stockID].quantity -= q;
+}
+
+// Helper function to get a value from the encoder
+// This is like a mini "main" loop that iterates until encoder is clicked
+// Will print values on the second line of the LCD
+// Adapted from this tutorial: https://lastminuteengineers.com/rotary-encoder-arduino-tutorial/
+int getEncoderVal(int minAllowable, int maxAllowable, int stepSize) {
+  bool buttonPressed = false;
+  int tempInput = 0;
+  unsigned long lastButtonPress = 0;
+  int currentStateCLK;
+  int lastStateCLK;
+  
+  // Read the initial state of encoder CLK
+  lastStateCLK = digitalRead(ENC_CLK);
+  
+  while(!buttonPressed) {   
+    // Read the current state of CLK
+    currentStateCLK = digitalRead(ENC_CLK);
+  
+    // If last and current state of CLK are different, then pulse occurred
+    // React to only 1 state change to avoid double count
+    if (currentStateCLK != lastStateCLK  && currentStateCLK == 1){
+      // The board physically doesn't have enough pins for a direction wire
+      // Thus, either way makes an increase; values wrap around
+      tempInput += stepSize;
+
+      if(tempInput > maxAllowable) {
+        tempInput = minAllowable;
+      }
+      
+      lcd.setCursor(0, 1);
+      lcd.print("      ");
+      lcd.setCursor(0, 1);
+      lcd.print(tempInput);
+    }
+  
+    // Remember last CLK state
+    lastStateCLK = currentStateCLK;
+  
+    // Read the button state
+    int btnState = digitalRead(ENC_SW);
+  
+    //If we detect LOW signal, button is pressed
+    if (btnState == LOW) {
+      //if 50ms have passed since last LOW pulse, it means that the
+      //button has been pressed, released and pressed again
+      if (millis() - lastButtonPress > 50) {
+        buttonPressed = true;
+      }
+  
+      // Remember last button press event
+      lastButtonPress = millis();
+    }
+  
+    // Put in a slight delay to help debounce the reading
+    delay(1);
+  }
+
+  return tempInput;
 }
 
 // Helper function to print stock name on LCD

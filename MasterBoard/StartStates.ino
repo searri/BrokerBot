@@ -1,19 +1,15 @@
 void getNumOfYears() {
-  if(printNext) {
-    lcd.print("Game length:");
-    printNext = false;
-  }
+  lcd.print("Game length:");
 
-  // TEMPORARY: will replace with keypad commands
-  if(Serial.available()) {
-    years = Serial.parseInt();
-    lcd.setCursor(0, 1);
-    lcd.print(years, DEC);
-    lcd.print(" years");
-    delay(3000);
-    state++;
-    printNext = true;
-  }
+  // Get encoder input for number of years
+  years = getEncoderVal(2, 20, 1);
+
+  // Confirm to players the input
+  lcd.setCursor(0, 1);
+  lcd.print(years, DEC);
+  lcd.print(" years");
+  delay(2000);
+  state++;
 }
 
 void setUpServer() {
@@ -25,7 +21,7 @@ void setUpServer() {
     printNext = false;
   }
   
-  // TEMPORARY: will write years to other board and wait for confirmation
+  // TEMPORARY: make POST request to server
   if(Serial.available()) {
     short a = Serial.parseInt();
     state++;
