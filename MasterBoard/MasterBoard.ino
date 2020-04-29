@@ -181,13 +181,19 @@ void sellStock(short stockID, short q) {
 // Adapted from this tutorial: https://lastminuteengineers.com/rotary-encoder-arduino-tutorial/
 int getEncoderVal(int minAllowable, int maxAllowable, int stepSize) {
   bool buttonPressed = false;
-  int tempInput = 0;
+  int tempInput = minAllowable;
   unsigned long lastButtonPress = 0;
   int currentStateCLK;
   int lastStateCLK;
   
   // Read the initial state of encoder CLK
   lastStateCLK = digitalRead(ENC_CLK);
+
+  // Print current selected value
+  lcd.setCursor(0, 1);
+  lcd.print("      ");
+  lcd.setCursor(0, 1);
+  lcd.print(tempInput);
   
   while(!buttonPressed) {   
     // Read the current state of CLK
