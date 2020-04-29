@@ -21,7 +21,7 @@ void setUpServer() {
     printNext = false;
   }
   
-  // TEMPORARY: make POST request to server
+  // TODO: make POST request to server
   if(Serial.available()) {
     short a = Serial.parseInt();
     state++;

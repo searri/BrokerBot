@@ -130,16 +130,14 @@ short purchaseStock(short stockID, short q) {
     return 0;
   }
 
-  // TEMPORARY: will change to keypad input
+  // Request purchase of stock
   lcd.clear();
   showStockName(stockID);
-  lcd.setCursor(0, 1);
+  lcd.print(": ");
   lcd.print("Buy ");
   lcd.print(q);
-  while(!Serial.available()){}
-  short actuallyPurchased = Serial.parseInt();
-  lcd.print(" ");
-  lcd.print(actuallyPurchased);
+  short actuallyPurchased = getEncoderVal(0, q, 10);
+  lcd.print(" BOUGHT");
   delay(1500);
 
   // Update liquid cash and portfolio quantity
@@ -162,16 +160,14 @@ void sellStock(short stockID, short q) {
     return;
   }
 
-  // TEMPORARY: will change to keypad input
+  // Request selling of stock
   lcd.clear();
   showStockName(stockID);
-  lcd.setCursor(0, 1);
+  lcd.print(": ");
   lcd.print("Sell ");
   lcd.print(q);
-  while(!Serial.available()){}
-  short actuallySold = Serial.parseInt();
-  lcd.print(" ");
-  lcd.print(actuallySold);
+  short actuallySold = getEncoderVal(0, q, 10);
+  lcd.print(" SOLD");
   delay(1500);
 
   // Update liquid cash and portfolio quantity
@@ -239,41 +235,41 @@ int getEncoderVal(int minAllowable, int maxAllowable, int stepSize) {
   return tempInput;
 }
 
-// Helper function to print stock name on LCD
+// Helper function to print stock name on LCD (6 characters)
 void showStockName(short stockID) {
   switch(stockID) {
     case 0:
-      lcd.print("CITY BONDS");
+      lcd.print("CITY  ");
       break;
     case 1:
-      lcd.print("GROWTH CORP");
+      lcd.print("GROWTH");
       break;
     case 2:
-      lcd.print("METRO PROP");
+      lcd.print("METRO ");
       break;
     case 3:
-      lcd.print("PIONEER MUTL");
+      lcd.print("PIONR ");
       break;
     case 4:
-      lcd.print("SHADY BROOKS");
+      lcd.print("SHADY ");
       break;
     case 5:
-      lcd.print("STRYKER");
+      lcd.print("STRYKR");
       break;
     case 6:
-      lcd.print("TRI CITY");
+      lcd.print("TRI   ");
       break;
     case 7:
-      lcd.print("UNITED AUTO");
+      lcd.print("UNITED");
       break;
     case 8:
-      lcd.print("URANIUM ENT");
+      lcd.print("URNIUM");
       break;
     case 9:
-      lcd.print("VALLEY PWR");
+      lcd.print("VALLEY");
       break;
     default:
-      lcd.print("ERROR");
+      lcd.print("ERROR ");
       break;
   }
 }
