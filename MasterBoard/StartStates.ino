@@ -13,20 +13,14 @@ void getNumOfYears() {
 }
 
 void setUpServer() {
-  if(printNext) {
-    lcd.clear();
-    lcd.print("Connecting to");
-    lcd.setCursor(0, 1);
-    lcd.print("game server...");
-    printNext = false;
-  }
-  
+  lcd.clear();
+  lcd.print("Connecting to");
+  lcd.setCursor(0, 1);
+  lcd.print("game server...");
+
   // TODO: make POST request to server
-  if(Serial.available()) {
-    short a = Serial.parseInt();
-    state++;
-    printNext = true;
-  }
+  delay(3000);
+  state++;
 }
 
 // STRATEGY

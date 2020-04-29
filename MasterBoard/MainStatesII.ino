@@ -30,11 +30,9 @@ void updateStockPrices() {
   }
 
   // TODO: make POST request to server
-  if(Serial.available()) {
-    short a = Serial.parseInt();
-    state++;
-    proceed = false;
-  }
+  delay(3000);
+  state++;
+  proceed = false;
 }
 
 // STRATEGY
@@ -55,12 +53,8 @@ void findStocksToSell() {
   if(!soldAny) {
     lcd.clear();
     lcd.print("Not selling.");
-    lcd.setCursor(0, 1);
-    lcd.print("Continue: any #");
-    while(!Serial.available()){}
-    short actuallySold = Serial.parseInt();
+    delay(3000);
     lcd.clear();
-    delay(1000);
   }
 
   state++;
@@ -86,6 +80,10 @@ void findStocksToBuy() {
   // If this is 0, we can't afford even the cheapest stock
   if(!quantToBuy) {
     state = 3;
+    lcd.clear();
+    lcd.print("Done buying.");
+    delay(3000);
+    lcd.clear();
     return;
   }
 
@@ -98,6 +96,10 @@ void findStocksToBuy() {
   } else {
     // We successfully bought everything, move to next year
     state = 3;
+    lcd.clear();
+    lcd.print("Done buying.");
+    delay(3000);
+    lcd.clear();
   }
 }
 
