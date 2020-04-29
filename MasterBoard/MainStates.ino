@@ -21,29 +21,25 @@ void calcDividends() {
 void bullOrBear() {
   if(printNext) {
     lcd.clear();
-    lcd.print("ODD: Bull");
-    lcd.setCursor(0, 1);
-    lcd.print("EVEN: Bear");
+    lcd.print("Roll: BULL/BEAR");
     printNext = false;
   }
 
-  // TEMPORARY: will replace with keypad commands
-  if(Serial.available()) {
-    char roll = Serial.parseInt();
-    lcd.clear();
-    lcd.print(roll, DEC);
-    lcd.print(" : ");
-    if(roll % 2) {
-      lcd.print("BULL");
-      isBullMkt = true;
-    } else {
-      lcd.print("BEAR");
-      isBullMkt = false;
-    }
-    delay(3000);
-    state++;
-    printNext = true;
+  // Get dice roll for Bull/Bear market
+  int roll = getEncoderVal(1, 6, 1);
+  lcd.setCursor(0, 1);
+  lcd.print(roll);
+  lcd.print(": ");
+  if(roll % 2) {
+    lcd.print("BULL");
+    isBullMkt = true;
+  } else {
+    lcd.print("BEAR");
+    isBullMkt = false;
   }
+  delay(2000);
+  state++;
+  printNext = true;
 }
 
 // Calculate price changes based on dice roll
@@ -57,25 +53,12 @@ void getPriceRoll() {
     printNext = false;
   }
 
-  // TEMPORARY: will replace with keypad commands
-  if(Serial.available()) {
-    roll = Serial.parseInt();
-    if(roll > 12 || roll < 2) {
-      lcd.print("INVALID");
-      delay(2000);
-      lcd.setCursor(0, 1);
-      lcd.print("       ");
-    } else {
-      lcd.setCursor(0, 1);
-      lcd.print(roll, DEC);
-      delay(2000);
-      proceed = true;
-    }
-  }
+  // Get price change dice roll
+  roll = getEncoderVal(2, 12, 1);
+  lcd.setCursor(0, 1);
+  lcd.print(roll);
+  delay(2000);
 
-  if(!proceed) {
-    return;
-  }
 
   // ALL THE PRICE CHANGE DATA
   short bullMktData[11][NUM_STOCKS-1] = {
@@ -128,26 +111,11 @@ void getEventCard() {
     printNext = false;
   }
 
-  // TEMPORARY: will replace with keypad commands
-  if(Serial.available()) {
-    event = Serial.parseInt();
-    if(event > 36 || event < 1) {
-      lcd.setCursor(0, 1);
-      lcd.print("INVALID");
-      delay(2000);
-      lcd.setCursor(0, 1);
-      lcd.print("       ");
-    } else {
-      lcd.setCursor(0, 1);
-      lcd.print(event, DEC);
-      delay(2000);
-      proceed = true;
-    }
-  }
-
-  if(!proceed) {
-    return;
-  }
+  // Get event card from encoder
+  event = getEncoderVal(1, 36, 1);
+  lcd.setCursor(0, 1);
+  lcd.print(event);
+  delay(2000);
 
   switch(event) {
     case 1:
