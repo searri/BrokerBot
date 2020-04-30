@@ -43,7 +43,18 @@ def initialize_game():
             prev_year = "Year " + str(game_info["current_year"])
             updated_prices = []
             for i in range(len(price_changes)):
-                stocks[i][year] = price_changes[i] + stocks[i][prev_year]
+                # HTML has its own way of displaying special changes, so this also needs to predict them
+                if stocks[i][prev_year] >= 150:
+                    # Stock split
+                    stocks[i][year] = price_changes[i] + int(
+                        round(stocks[i][prev_year] / 2)
+                    )
+                elif stocks[i][prev_year] <= 0:
+                    # Stock price reset
+                    stocks[i][year] = 100
+                else:
+                    stocks[i][year] = price_changes[i] + stocks[i][prev_year]
+
                 updated_prices.append(stocks[i][year])
             game_info["current_year"] += 1
             reply["success"] = True
