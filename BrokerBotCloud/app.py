@@ -21,24 +21,44 @@ stocks = [
 ]
 
 # Internal logistics
-active_game = False
-current_year = 1
+game_info = {"active": False, "current_year": 1, "end_years": -1}
+
+# Make POST requests here to play the game
+@app.route("/stocks", methods=["POST"])
+def initialize_game():
+    reply = {"success": False, "game_info": game_info}
+    r = request.get_json()
+
+    if "num_years" in r:
+        # Board is attempting to start a game
+        game_info["end_years"] = r["num_years"]
+        game_info["active"] = True
+        reply["success"] = True
+
+    elif "price_changes" in r and game_info["active"]:
+        # Board is sending price change data
+        if r["year"] == game_info["current_year"] + 1:
+            price_changes = r["price_changes"]
+            year = "Year " + str(r["year"])
+            prev_year = "Year " + str(game_info["current_year"])
+            updated_prices = []
+            for i in range(len(price_changes)):
+                stocks[i][year] = price_changes[i] + stocks[i][prev_year]
+                updated_prices.append(stocks[i][year])
+            game_info["current_year"] += 1
+            reply["success"] = True
+            reply["updated_prices"] = updated_prices
+
+    return jsonify(reply)
+
 
 # This is where webpages will get directed to
 @app.route("/")
 def start_game():
-    if not active_game:
-        return render_template("gamewait.html")
-    else:
+    if game_info["active"]:
         return render_template("gameactive.html", stock_prices=stocks)
-
-
-# TODO: Implement POST requests to update stock prices/start game
-@app.route("/quarks", methods=["POST"])
-def addOne():
-    new_quark = request.get_json()
-    quarks.append(new_quark)
-    return jsonify({"quarks": quarks})
+    else:
+        return render_template("gamewait.html")
 
 
 if __name__ == "__main__":
