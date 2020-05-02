@@ -12,7 +12,7 @@ Arduino code has the following dependencies:
 - `ArduinoJson`: obtainable through library manager
 - ESP8266 Boards: follow [this tutorial](https://randomnerdtutorials.com/how-to-install-esp8266-board-arduino-ide/)
 
-Additionally, you will need to have `connection.h` visible to Arduino, which contains Internet credentials:
+Additionally, you will need to have `connection.h` visible to Arduino, which contains internet credentials:
 ```c
 // Your WiFi's name
 #define WIFI_NAME "Name"
@@ -23,6 +23,7 @@ Additionally, you will need to have `connection.h` visible to Arduino, which con
 // Address to make HTTP requests to
 #define GAMESERVER_IP "http://<some ip>/stocks"
 ```
+This file could be in this repository or in another directory where Arduino can find it. Don't upload your internet credentials to GitHub!
 
 ## Wiring Diagram
 ![](project_assets/BrokerBot_diagram.png)
