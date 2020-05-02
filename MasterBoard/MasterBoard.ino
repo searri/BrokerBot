@@ -1,5 +1,12 @@
+#include <connection.h>
 #include <LiquidCrystal.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266WiFiMulti.h>
+#include <ESP8266HTTPClient.h>
+#include <WiFiClient.h>
+#include <ArduinoJson.h>
 #include "Stocks.h"
+
 #define NUM_STOCKS 10
 #define ENC_CLK D1
 #define ENC_SW D2
@@ -14,11 +21,14 @@ int liquidCash = 5000;
 // Internal logistics
 char state = 0;
 char years = 100;
-char yearsPassed = 0;
+char yearsPassed = 1;
 bool printNext = true;
 bool isBullMkt;
 char priceChanges[NUM_STOCKS];
 bool proceed = false;
+
+// Set up WiFi object
+ESP8266WiFiMulti WiFiMulti;
 
 void setup() {
   // Initialize hardware I/O
@@ -48,6 +58,15 @@ void setup() {
 
   // Shuffle random seed using electrical noise on A0
   randomSeed(analogRead(A0));
+
+  // Connect to WiFi
+  lcd.clear();
+  lcd.print("Connecting...");
+  WiFi.mode(WIFI_STA);
+  WiFiMulti.addAP(WIFI_NAME, WIFI_PSWD);
+  while(WiFiMulti.run() != WL_CONNECTED) {
+    delay(10);
+  }
 }
 
 

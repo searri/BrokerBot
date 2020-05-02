@@ -29,10 +29,52 @@ void updateStockPrices() {
     proceed = true;
   }
 
-  // TODO: make POST request to server
-  delay(3000);
-  state++;
-  proceed = false;
+  StaticJsonDocument<200> jsonBuffer;
+  if((WiFiMulti.run() == WL_CONNECTED)) {
+    WiFiClient client;
+    HTTPClient http;
+
+    // Must be defined in "connection.h"
+    if (http.begin(client, GAMESERVER_IP)) {
+      String stringStub = "{'price_changes':[";
+      String toSend = stringStub;
+      for(int i=0; i<NUM_STOCKS; i++) {
+        toSend += portfolio[i].amtChange;
+        toSend += ", ";
+      }
+      toSend += "], 'year':";
+      toSend += (int)yearsPassed;
+      toSend += "}";
+      
+      int httpCode = http.POST(toSend);
+
+      // httpCode will be negative on error
+      if (httpCode > 0) {
+        if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+          String payload = http.getString();
+          deserializeJson(jsonBuffer, payload);
+          String temp;
+          serializeJson(jsonBuffer["success"], temp);
+          if(temp[0] == 't') {
+            state++;
+            proceed = false;
+          }
+        }
+        
+      } else {
+        lcd.clear();
+        lcd.print("HTTP request failed:");
+        lcd.setCursor(0,1);
+        lcd.print(http.errorToString(httpCode).c_str());
+        delay(100);
+      }
+
+      http.end();
+    }
+    
+  } else {
+    delay(10);
+  }
 }
 
 // STRATEGY
