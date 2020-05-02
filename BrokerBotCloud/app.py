@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request, render_template, url_for
 from collections import OrderedDict
-import os
+import os, ast
 
 # Create Flask object
 app = Flask(__name__)
@@ -27,13 +27,16 @@ game_info = {"active": False, "current_year": 1, "end_years": -1}
 @app.route("/stocks", methods=["POST"])
 def initialize_game():
     reply = {"success": False, "game_info": game_info}
-    r = request.get_json()
+    req_data = request.data
+    dict_str = req_data.decode("UTF-8")
+    r = ast.literal_eval(dict_str)
 
     if "num_years" in r:
         # Board is attempting to start a game
-        game_info["end_years"] = r["num_years"]
-        game_info["active"] = True
-        reply["success"] = True
+        if not game_info["active"]:
+            game_info["end_years"] = r["num_years"]
+            game_info["active"] = True
+            reply["success"] = True
 
     elif "price_changes" in r and game_info["active"]:
         # Board is sending price change data
