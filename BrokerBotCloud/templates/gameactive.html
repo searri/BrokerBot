@@ -61,8 +61,8 @@
 <body>
 
     <div class="bgimg w3-display-container">
-        <div class="w3-display-middle" , style="background-color: white;">
-            <table>
+        <div class="w3-display-middle">
+            <table style="background-color: white;">
                 <thead>
                     <tr>
                         {% for header in stock_prices[0].keys() %}
@@ -101,7 +101,16 @@
                 });
             </script>
 
+                    
+            {% if end %}
+            <div class="w3-text-white">
+                <hr class="w3-border-grey" style="margin:auto;width:40%">
+                <p class="w3-large w3-center">These are your final prices!</p>
+            </div>
+            {% endif %}
+            
         </div>
+
         <div class="w3-display-bottomleft w3-container w3-text-white">
             <p><a href="https://www.youtube.com/watch?v=86MKzstijzI" target="_blank">Background</a> | Follow me on <a
                     href="https://github.com/searri" target="_blank">GitHub</a></p>

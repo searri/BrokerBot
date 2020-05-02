@@ -70,7 +70,11 @@ def initialize_game():
 @app.route("/")
 def start_game():
     if game_info["active"]:
-        return render_template("gameactive.html", stock_prices=stocks)
+        return render_template(
+            "gameactive.html",
+            stock_prices=stocks,
+            end=game_info["end_years"] == game_info["current_year"],
+        )
     else:
         return render_template("gamewait.html")
 
