@@ -27,6 +27,7 @@ This file could be in this repository or in another directory where Arduino can 
 
 ## Wiring Diagram
 ![](project_assets/BrokerBot_diagram.png)
+NOTE: I couldn't find a Fritzing part for the encoder, but I used a KY-040 rotary encoder, which has 5 pins. Due to pin limitations on the board, the DT (direction) pin on the encoder is unused.
 
 ## BrokerBot's Strategy
 Currently, the bot uses a simple "buy low, sell high" strategy: each turn, it sells the stocks which made over a certain threshold of money since they were purchased, and then buys the cheapest stock available. Initial portfolio is randomly selected. Areas in the code which control BrokerBot's strategy and not game rules are marked with a `//STRATEGY` comment.
