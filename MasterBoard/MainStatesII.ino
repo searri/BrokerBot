@@ -43,7 +43,7 @@ void updateStockPrices() {
         toSend += ", ";
       }
       toSend += "], 'year':";
-      toSend += (int)yearsPassed;
+      toSend += (int)currYear;
       toSend += "}";
       
       int httpCode = http.POST(toSend);
@@ -56,8 +56,14 @@ void updateStockPrices() {
           String temp;
           serializeJson(jsonBuffer["success"], temp);
           if(temp[0] == 't') {
-            state++;
-            proceed = false;
+            if(currYear == years) {
+              // These are the final prices; jump to game end
+              state = 10;
+            } else {
+              // Otherwise, attempt to start selling stocks
+              state++;
+              proceed = false; 
+            }
           }
         }
         

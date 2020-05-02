@@ -21,10 +21,9 @@ int liquidCash = 5000;
 // Internal logistics
 char state = 0;
 char years = 100;
-char yearsPassed = 1;
+char currYear = 1;
 bool printNext = true;
 bool isBullMkt;
-char priceChanges[NUM_STOCKS];
 bool proceed = false;
 
 // Set up WiFi object
@@ -74,11 +73,6 @@ void loop() {
   // Error check
   if(liquidCash < 0) {
     state = 101;
-  }
-
-  // Check for game end
-  if(yearsPassed >= years) {
-    state = 10;
   }
 
   // Handle current game state

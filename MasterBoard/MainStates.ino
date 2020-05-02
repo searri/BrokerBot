@@ -14,7 +14,7 @@ void calcDividends() {
   }
 
   // Advance time
-  yearsPassed++;
+  currYear++;
   state++;
 }
 
