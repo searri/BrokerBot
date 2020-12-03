@@ -56,7 +56,7 @@ void updateStockPrices() {
           String temp;
           serializeJson(jsonBuffer["success"], temp);
           if(temp[0] == 't') {
-            if(currYear == years) {
+            if(currYear >= years) {
               // These are the final prices; jump to game end
               state = 10;
             } else {
@@ -69,10 +69,22 @@ void updateStockPrices() {
         
       } else {
         lcd.clear();
-        lcd.print("HTTP request failed:");
+        lcd.print("Request failed:");
         lcd.setCursor(0,1);
         lcd.print(http.errorToString(httpCode).c_str());
         delay(100);
+
+        // Manual override to avoid getting stuck
+        if(getEncoderVal(0, 1, 1)) {
+          if(currYear >= years) {
+            // These are the final prices; jump to game end
+            state = 10;
+          } else {
+            // Otherwise, attempt to start selling stocks
+            state++;
+            proceed = false; 
+          }
+        }
       }
 
       http.end();
