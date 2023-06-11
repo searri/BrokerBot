@@ -1,4 +1,3 @@
-#include <connection.h>
 #include <LiquidCrystal.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WiFiMulti.h>
@@ -6,6 +5,7 @@
 #include <WiFiClient.h>
 #include <ArduinoJson.h>
 #include "Stocks.h"
+#include "connection.h"
 
 #define NUM_STOCKS 10
 #define ENC_CLK D1

@@ -23,7 +23,7 @@ Additionally, you will need to have `connection.h` visible to Arduino, which con
 // Address to make HTTP requests to
 #define GAMESERVER_IP "http://<some ip>/stocks"
 ```
-This file could be in this repository or in another directory where Arduino can find it. Don't upload your internet credentials to GitHub!
+This file should be in this repository's folder. Don't upload your internet credentials to GitHub!
 
 ## Wiring Diagram
 ![](project_assets/BrokerBot_diagram.png)
