@@ -6,10 +6,10 @@
     <title>S&B Cloud Service</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="refresh" content="10">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link href="https://fonts.googleapis.com/css2?family=Barlow&family=Lato&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles.css') }}">
     <style>
         body,
         h1,
@@ -43,26 +43,14 @@
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
-
-        .stockreset {
-            background-color: rgb(230, 93, 93);
-        }
-
-        .nodividends {
-            background-color: rgb(240, 215, 105);
-        }
-
-        .stocksplit {
-            background-color: rgb(134, 218, 134);
-        }
     </style>
 </head>
 
 <body>
 
     <div class="bgimg w3-display-container">
-        <div class="w3-display-middle">
-            <table style="background-color: white; font-size:x-large">
+        <div class="w3-display-middle" style="box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);">
+            <table style="background-color: white; font-size:x-large; border-radius: 4px;">
                 <thead>
                     <tr>
                         {% for header in stock_prices[0].keys() %}
@@ -71,10 +59,14 @@
                     </tr>
                 </thead>
 
-                {% for row in stock_prices %}
+                {% for row, change in zip(stock_prices, price_changes) %}
                 <tr>
                     {% for key in stock_prices[0].keys() %}
+                    {% if "Year " + curr_year == key %}
+                    <td class="{{ return_color_class(change) }}">{{ row[key] }}</td>
+                    {% else %}
                     <td>{{ row[key] }}</td>
+                    {% endif %}
                     {% endfor %}
                 </tr>
                 {% endfor %}
@@ -84,6 +76,12 @@
                 $(function () {
                     $('tr > td').each(function (index) {
                         var price = $(this).text();
+
+                        if (price <= 50 || price >= 150) {
+                            // Special coloring will be added later
+                            $(this).removeClass("stockup");
+                            $(this).removeClass("stockdown");
+                        }
 
                         if (price <= 0) {
                             // Stock price is too low; will reset to 100
@@ -101,20 +99,47 @@
                 });
             </script>
 
-                    
+
             {% if end %}
             <div class="w3-text-white">
                 <hr class="w3-border-grey" style="margin:auto;width:40%">
                 <p class="w3-large w3-center">These are your final prices!</p>
             </div>
             {% endif %}
-            
+
         </div>
 
-        <div class="w3-display-bottomleft w3-container w3-text-white">
-            <p><a href="https://www.youtube.com/watch?v=86MKzstijzI" target="_blank">Background</a> | Follow me on <a
-                    href="https://github.com/searri" target="_blank">GitHub</a></p>
-        </div>
+        <footer>
+            <div id="footer" class="w3-display-bottommiddle row" style="width: 100%;">
+
+                <div class="column-left">
+                    <div class="news red ticker-wrapper-h">
+                        <span class="heading">BREAKING</span>
+                        <ul class="news-ticker-h">
+                            <li>{{ main_headline }}</li>
+                            <li>{{ second_headline }}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="column-right">
+                    <div class="news blue news-animation ticker-wrapper-h">
+                        <span class="heading">Prices</span>
+                        <ul>
+                            <li>{{ return_emoji(price_changes[0]) }} GRWTH: {{ return_symbol(price_changes[0]) }}{{ price_changes[0] }}</li>
+                            <li>{{ return_emoji(price_changes[1]) }} METRO: {{ return_symbol(price_changes[1]) }}{{ price_changes[1] }}</li>
+                            <li>{{ return_emoji(price_changes[2]) }} PIONR: {{ return_symbol(price_changes[2]) }}{{ price_changes[2] }}</li>
+                            <li>{{ return_emoji(price_changes[3]) }} SHADY: {{ return_symbol(price_changes[3]) }}{{ price_changes[3] }}</li>
+                            <li>{{ return_emoji(price_changes[4]) }} STRYK: {{ return_symbol(price_changes[4]) }}{{ price_changes[4] }}</li>
+                            <li>{{ return_emoji(price_changes[5]) }} TRCTC: {{ return_symbol(price_changes[5]) }}{{ price_changes[5] }}</li>
+                            <li>{{ return_emoji(price_changes[6]) }} UNITE: {{ return_symbol(price_changes[6]) }}{{ price_changes[6] }}</li>
+                            <li>{{ return_emoji(price_changes[7]) }} URNUM: {{ return_symbol(price_changes[7]) }}{{ price_changes[7] }}</li>
+                            <li>{{ return_emoji(price_changes[8]) }} VLLEY: {{ return_symbol(price_changes[8]) }}{{ price_changes[8] }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </div>
 
 </body>
