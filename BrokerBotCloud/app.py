@@ -1,6 +1,6 @@
-from flask import Flask, jsonify, request, render_template, url_for
+from flask import Flask, jsonify, request, render_template
 from collections import OrderedDict
-import os, ast
+import json
 
 # Create Flask object
 app = Flask(__name__)
@@ -21,49 +21,95 @@ stocks = [
 ]
 
 # Internal logistics
-game_info = {"active": False, "current_year": 1, "end_years": -1}
+game_info = {
+    "active": False,
+    "current_year": 1,
+    "end_years": -1,
+    "main_headline": "MARKETS OPEN",
+    "second_headline": "Analysts optimistic as new generation of ambitious traders hit exchange floors this morning",
+    "price_changes": [0 for _ in range(9)],
+}
+with open("board_data.json", "r") as infile:
+    board_data = json.load(infile)
+
 
 # Make POST requests here to play the game
 @app.route("/stocks", methods=["POST"])
-def initialize_game():
+def initialize_game_state():
     reply = {"success": False, "game_info": game_info}
-    req_data = request.data
-    dict_str = req_data.decode("UTF-8")
-    r = ast.literal_eval(dict_str)
+    req = request.json
 
-    if "num_years" in r:
-        # Board is attempting to start a game
+    if "num_years" in req:
+        # Client is attempting to start a game
         if not game_info["active"]:
-            game_info["end_years"] = r["num_years"]
+            game_info["end_years"] = req["num_years"]
             game_info["active"] = True
             reply["success"] = True
 
-    elif "price_changes" in r and game_info["active"]:
-        # Board is sending price change data
-        if r["year"] == game_info["current_year"] + 1:
-            price_changes = r["price_changes"]
-            year = "Year " + str(r["year"])
-            prev_year = "Year " + str(game_info["current_year"])
-            updated_prices = []
-            for i in range(len(price_changes)):
-                # HTML has its own way of displaying special changes, so this also needs to predict them
-                if stocks[i][prev_year] >= 150:
-                    # Stock split
-                    stocks[i][year] = price_changes[i] + int(
-                        round(stocks[i][prev_year] / 2)
-                    )
-                elif stocks[i][prev_year] <= 0:
-                    # Stock price reset
-                    stocks[i][year] = 100
-                else:
-                    stocks[i][year] = price_changes[i] + stocks[i][prev_year]
+    elif "is_bull" in req and game_info["active"]:
+        # Client is sending price change data
+        year = "Year " + str(game_info["current_year"] + 1)
+        prev_year = "Year " + str(game_info["current_year"])
+        bull_or_bear = "bull" if req["is_bull"] else "bear"
+        event_card = board_data["events"][req["event"] - 1]
+        game_info["main_headline"] = list(board_data["events_desc"][req["event"] - 1].keys())[0]
+        game_info["second_headline"] = board_data["events_desc"][req["event"] - 1][
+            game_info["main_headline"]
+        ]
+        price_changes = [0]
+        for x in board_data["bull"]:
+            price_change = board_data[bull_or_bear][x][req["roll"] - 2]
+            if x in event_card:
+                price_change += event_card[x]
+            price_changes.append(price_change)
 
-                updated_prices.append(stocks[i][year])
-            game_info["current_year"] += 1
-            reply["success"] = True
-            reply["updated_prices"] = updated_prices
+        game_info["price_changes"] = price_changes[1:]
+        updated_prices = []
+        for i, change in enumerate(price_changes):
+            # HTML has its own way of displaying special changes, so this also needs to predict them
+            if stocks[i][prev_year] >= 150:
+                # Stock split
+                stocks[i][year] = change + int(round(stocks[i][prev_year] / 2))
+            elif stocks[i][prev_year] <= 0:
+                # Stock price reset
+                stocks[i][year] = 100
+            else:
+                stocks[i][year] = change + stocks[i][prev_year]
+
+            updated_prices.append(stocks[i][year])
+        game_info["current_year"] += 1
+        reply["success"] = True
+        reply["updated_prices"] = updated_prices
 
     return jsonify(reply)
+
+
+@app.template_global()
+def return_emoji(price_change):
+    if price_change > 0:
+        return "🔺"
+    elif price_change < 0:
+        return "🔻"
+    else:
+        return "➖"
+
+
+@app.template_global()
+def return_symbol(price_change):
+    if price_change >= 0:
+        return "+"
+    else:
+        return ""
+
+
+@app.template_global()
+def return_color_class(price_change):
+    if price_change > 0:
+        return "stockup"
+    elif price_change < 0:
+        return "stockdown"
+    else:
+        return ""
 
 
 # This is where webpages will get directed to
@@ -74,6 +120,11 @@ def start_game():
             "gameactive.html",
             stock_prices=stocks,
             end=game_info["end_years"] == game_info["current_year"],
+            curr_year=str(game_info["current_year"]),
+            main_headline=game_info["main_headline"],
+            second_headline=game_info["second_headline"],
+            price_changes=game_info["price_changes"],
+            zip=zip,
         )
     else:
         return render_template("gamewait.html")
