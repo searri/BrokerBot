@@ -82,9 +82,14 @@ public class HomeFragment extends Fragment {
 
         Button startGame = root.findViewById(R.id.startgame);
         startGame.setOnClickListener(v -> {
-            int gameYears = Integer.parseInt(((EditText) root.findViewById(R.id.enterYears)).getText().toString());
+            int gameYears = -1;
+            try {
+                gameYears = Integer.parseInt(((EditText) root.findViewById(R.id.enterYears)).getText().toString());
+            } catch (NumberFormatException e) {
+                Log.d("BUTTONS", "Error: " + e);
+            }
             if (gameYears < 1) {
-                Toast.makeText(getActivity(), "Invalid Game Length", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Invalid Game Length", Toast.LENGTH_SHORT).show();
             } else {
                 try {
                     JSONObject startGamePayload = new JSONObject("{\"num_years\": " + gameYears + "}");
@@ -101,9 +106,14 @@ public class HomeFragment extends Fragment {
             String bullOrBear = ((Spinner) root.findViewById(R.id.marketTypeSpinner)).getSelectedItem().toString();
             boolean isBull = bullOrBear.equals("Bull");
             int diceRoll = Integer.parseInt(((Spinner) root.findViewById(R.id.marketspinner)).getSelectedItem().toString());
-            int eventCard = Integer.parseInt(((EditText) root.findViewById(R.id.eventCard)).getText().toString());
+            int eventCard = -1;
+            try {
+                eventCard = Integer.parseInt(((EditText) root.findViewById(R.id.eventCard)).getText().toString());
+            } catch (NumberFormatException e) {
+                Log.d("BUTTONS", "Error: " + e);
+            }
             if (eventCard < 1 || eventCard > 36) {
-                Toast.makeText(getActivity(), "Invalid Event Card number", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Invalid Event Card number", Toast.LENGTH_SHORT).show();
             } else {
                 try {
                     JSONObject gameUpdatePayload = new JSONObject("{\"is_bull\": " + isBull + ", \"roll\":" + diceRoll + ", \"event\":" + eventCard + "}");
