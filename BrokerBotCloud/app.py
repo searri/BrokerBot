@@ -8,16 +8,16 @@ app = Flask(__name__)
 # Table of stock information
 # OrderedDicts because years are sequential, but convenient to access data w/ key-value pairs
 stocks = [
-    OrderedDict({"Company": "Central City Municipal Bonds", "Year 1": 100}),
-    OrderedDict({"Company": "Growth Corporation of America", "Year 1": 100}),
-    OrderedDict({"Company": "Metro Properties, Inc.", "Year 1": 100}),
-    OrderedDict({"Company": "Pioneer Mutual Fund", "Year 1": 100}),
-    OrderedDict({"Company": "Shady Brooks Development", "Year 1": 100}),
-    OrderedDict({"Company": "Stryker Drilling Company", "Year 1": 100}),
-    OrderedDict({"Company": "Tri-City Transport Company", "Year 1": 100}),
-    OrderedDict({"Company": "United Auto Company", "Year 1": 100}),
-    OrderedDict({"Company": "Uranium Enterprises, Inc.", "Year 1": 100}),
-    OrderedDict({"Company": "Valley Power & Light Company", "Year 1": 100}),
+    OrderedDict({"Company": "Central City Municipal Bonds", "Y1": 100}),
+    OrderedDict({"Company": "Growth Corporation of America", "Y1": 100}),
+    OrderedDict({"Company": "Metro Properties, Inc.", "Y1": 100}),
+    OrderedDict({"Company": "Pioneer Mutual Fund", "Y1": 100}),
+    OrderedDict({"Company": "Shady Brooks Development", "Y1": 100}),
+    OrderedDict({"Company": "Stryker Drilling Company", "Y1": 100}),
+    OrderedDict({"Company": "Tri-City Transport Company", "Y1": 100}),
+    OrderedDict({"Company": "United Auto Company", "Y1": 100}),
+    OrderedDict({"Company": "Uranium Enterprises, Inc.", "Y1": 100}),
+    OrderedDict({"Company": "Valley Power & Light Company", "Y1": 100}),
 ]
 
 # Internal logistics
@@ -69,8 +69,8 @@ def initialize_game_state():
 
     if "is_bull" in req and game_info["active"]:
         # Client is sending price change data
-        year = "Year " + str(game_info["current_year"] + 1)
-        prev_year = "Year " + str(game_info["current_year"])
+        year = "Y" + str(game_info["current_year"] + 1)
+        prev_year = "Y" + str(game_info["current_year"])
         bull_or_bear = "bull" if req["is_bull"] else "bear"
         event_card = board_data["events"][req["event"] - 1]
         game_info["main_headline"] = list(board_data["events_desc"][req["event"] - 1].keys())[0]

@@ -62,7 +62,7 @@
                 {% for row, change in zip(stock_prices, price_changes) %}
                 <tr>
                     {% for key in stock_prices[0].keys() %}
-                    {% if "Year " + curr_year == key %}
+                    {% if "Y" + curr_year == key %}
                     <td class="{{ return_color_class(change) }}">{{ row[key] }}</td>
                     {% else %}
                     <td>{{ row[key] }}</td>
