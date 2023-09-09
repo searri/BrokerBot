@@ -27,26 +27,47 @@ game_info = {
     "end_years": -1,
     "main_headline": "MARKETS OPEN",
     "second_headline": "Analysts optimistic as new generation of ambitious traders hit exchange floors this morning",
-    "price_changes": [0 for _ in range(9)],
+    "price_changes": [0 for _ in range(10)],
 }
 with open("board_data.json", "r") as infile:
     board_data = json.load(infile)
 
 
-# Make POST requests here to play the game
-@app.route("/stocks", methods=["POST"])
-def initialize_game_state():
-    reply = {"success": False, "game_info": game_info}
+@app.route("/state", methods=["GET"])
+def get_state():
+    """
+    Make POST request here to simply return game_info dict
+    """
+    return jsonify(game_info)
+
+
+@app.route("/start", methods=["POST"])
+def start_game():
+    """
+    Make a POST request here to start the game
+    """
     req = request.json
 
     if "num_years" in req:
-        # Client is attempting to start a game
         if not game_info["active"]:
             game_info["end_years"] = req["num_years"]
             game_info["active"] = True
-            reply["success"] = True
 
-    elif "is_bull" in req and game_info["active"]:
+        return jsonify(game_info)
+
+    else:
+        return "JSON missing attribute", 400
+
+
+@app.route("/stocks", methods=["POST"])
+def initialize_game_state():
+    """
+    Make POST requests here to play the game
+    """
+    reply = {"success": False, "game_info": game_info}
+    req = request.json
+
+    if "is_bull" in req and game_info["active"]:
         # Client is sending price change data
         year = "Year " + str(game_info["current_year"] + 1)
         prev_year = "Year " + str(game_info["current_year"])
@@ -63,7 +84,6 @@ def initialize_game_state():
                 price_change += event_card[x]
             price_changes.append(price_change)
 
-        game_info["price_changes"] = price_changes[1:]
         updated_prices = []
         for i, change in enumerate(price_changes):
             # HTML has its own way of displaying special changes, so this also needs to predict them
@@ -80,8 +100,12 @@ def initialize_game_state():
         game_info["current_year"] += 1
         reply["success"] = True
         reply["updated_prices"] = updated_prices
+        game_info["price_changes"] = price_changes
 
-    return jsonify(reply)
+        return jsonify(reply)
+
+    else:
+        return "JSON missing attribute", 400
 
 
 @app.template_global()
@@ -114,7 +138,7 @@ def return_color_class(price_change):
 
 # This is where webpages will get directed to
 @app.route("/")
-def start_game():
+def render_game():
     if game_info["active"]:
         return render_template(
             "gameactive.html",
