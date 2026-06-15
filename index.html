@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stocks & Bonds - Interactive Digital Chalkboard</title>
+    <!-- Google Fonts: Outfit (headings) and Inter (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <span class="logo-icon">📈</span>
+                <div>
+                    <h1>STOCKS & BONDS</h1>
+                    <p class="tagline">Digital Chalkboard & Game Administrator</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="https://boardgamegeek.com/boardgame/1590/stocks-bonds" target="_blank" class="btn btn-secondary btn-sm">Game Info</a>
+                <button id="reset-game-btn" class="btn btn-danger btn-sm" style="display: none;">Reset Game</button>
+            </div>
+        </header>
+
+        <!-- Main Content Wrapper -->
+        <main class="main-content">
+            
+            <!-- Setup Screen (Shown by default, hidden when game active) -->
+            <section id="setup-panel" class="card setup-card">
+                <div class="setup-header">
+                    <h2>Game Setup</h2>
+                    <p>Configure the logistics for your session. The standard game runs for 10 years.</p>
+                </div>
+                <div class="setup-body">
+                    <div class="form-group">
+                        <label for="game-years">Number of Years</label>
+                        <div class="range-selector">
+                            <input type="range" id="game-years" min="2" max="20" value="10">
+                            <span id="years-display">10 Years</span>
+                        </div>
+                    </div>
+                    <button id="start-game-btn" class="btn btn-primary btn-lg btn-block">Start Session</button>
+                </div>
+            </section>
+
+            <!-- Dashboard Grid (Hidden by default, shown when game active) -->
+            <div id="game-dashboard" class="dashboard-grid" style="display: none;">
+                
+                <!-- Left Sidebar: Controls & Logistics -->
+                <aside class="sidebar-panel">
+                    <!-- Turn Card -->
+                    <div class="card status-card">
+                        <div class="status-header">
+                            <span class="badge" id="current-year-badge">Year 1 of 10</span>
+                            <h3>Current Phase</h3>
+                        </div>
+                        <div class="status-body">
+                            <div class="phase-indicator">
+                                <span class="phase-step active" id="step-1">1. Market Roll</span>
+                                <span class="phase-step" id="step-2">2. Price Roll</span>
+                                <span class="phase-step" id="step-3">3. Situation Card</span>
+                                <span class="phase-step" id="step-4">4. Finalize</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input Controls -->
+                    <div class="card controls-card">
+                        <h3>Input Next Turn's Parameters</h3>
+                        
+                        <div class="control-sections">
+                            <!-- 1. Market Direction -->
+                            <div class="control-group">
+                                <label>1. Market Trend (1d6)</label>
+                                <div class="market-toggle-group">
+                                    <button type="button" class="btn-toggle active" id="trend-bull" data-trend="bull">BULL</button>
+                                    <button type="button" class="btn-toggle" id="trend-bear" data-trend="bear">BEAR</button>
+                                </div>
+                                <div class="quick-roll-row">
+                                    <span class="roll-result-preview" id="market-roll-val">-</span>
+                                    <button class="btn btn-secondary btn-xs" id="roll-market-btn">🎲 Roll 1d6</button>
+                                </div>
+                                <small class="help-text">Odd rolls = Bull Market, Even rolls = Bear Market.</small>
+                            </div>
+
+                            <!-- 2. Price Change Roll -->
+                            <div class="control-group">
+                                <label for="price-roll">2. Price Change Roll (2d6: 2 - 12)</label>
+                                <div class="input-with-button">
+                                    <input type="number" id="price-roll" min="2" max="12" value="7">
+                                    <button class="btn btn-secondary" id="roll-price-btn">🎲 Roll 2d6</button>
+                                </div>
+                                <div class="roll-dice-preview" id="price-dice-preview">
+                                    <span class="die">-</span>
+                                    <span class="die">-</span>
+                                </div>
+                                <small class="help-text">Controls base price movements from the board game lookup sheet.</small>
+                            </div>
+
+                            <!-- 3. Situation Card -->
+                            <div class="control-group">
+                                <label for="event-card">3. Situation Card (1 - 36)</label>
+                                <div class="input-with-button">
+                                    <input type="number" id="event-card" min="1" max="36" placeholder="Card #">
+                                    <button class="btn btn-secondary" id="draw-card-btn">🃏 Draw Card</button>
+                                </div>
+                                <div id="card-display" class="card-display empty">
+                                    <span class="card-num-watermark">?</span>
+                                    <p class="card-text">No card active. Click draw or enter a card number to see effects.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Turn Button -->
+                        <div class="action-row">
+                            <button id="advance-year-btn" class="btn btn-primary btn-lg btn-block" disabled>
+                                Calculate & Advance Year
+                            </button>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Center Content: Chalkboard and Payout Details -->
+                <section class="main-panel">
+                    <!-- Chalkboard Card -->
+                    <div class="card chalkboard-card">
+                        <div class="card-header-flex">
+                            <h2>Chalkboard</h2>
+                            <div class="legend">
+                                <span class="legend-item"><span class="legend-dot normal"></span> Normal</span>
+                                <span class="legend-item"><span class="legend-dot split"></span> Stock Split (Double Shares)</span>
+                                <span class="legend-item"><span class="legend-dot caution"></span> No Dividend (Price &le; 50)</span>
+                                <span class="legend-item"><span class="legend-dot reset"></span> Reset to 100 (Lose Shares)</span>
+                            </div>
+                        </div>
+                        <div class="table-scroll-container">
+                            <table id="chalkboard-table" class="chalkboard-table">
+                                <thead>
+                                    <tr id="table-headers">
+                                        <th>Company</th>
+                                        <th>Div / 10 Sh.</th>
+                                        <th>Year 1 (Start)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Payouts & Logs Section -->
+                    <div class="info-grid">
+                        <!-- Dividends Card -->
+                        <div class="card dividend-card">
+                            <h3>Current Year Dividend Payouts</h3>
+                            <p class="help-text">Only stocks trading above $50 pay out dividends. Displayed values are per 10 shares.</p>
+                            <div id="dividend-payout-list" class="dividend-list">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- System Logs Card -->
+                        <div class="card logs-card">
+                            <h3>Historical News Feed</h3>
+                            <div id="log-console" class="log-console">
+                                <div class="log-entry system-msg">Session started. All stocks initialized to $100.</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+            </div>
+        </main>
+    </div>
+
+    <!-- Celebration Modal (Game Over) -->
+    <div id="game-over-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Game Over!</h2>
+            </div>
+            <div class="modal-body">
+                <p>The game has reached its final year. Here are the final stock prices on the board:</p>
+                <div class="final-prices-grid" id="final-prices-container">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="modal-close-btn" class="btn btn-primary">Start New Session</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
